@@ -3,10 +3,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The text file contains a list of the integers from 1 to 10000 in unsorted order; 
- * you should treat this as a stream of numbers, arriving one by one. Letting xi denote 
- * the ith number of the file, the kth median mk is defined as the median of the numbers x1,…,xk. 
- * (So, if k is odd, then mk is ((k+1)/2)th smallest number among x1,…,xk; if k is even, then mk 
+ * The text file contains a list of the integers from 1 to 10000 in unsorted order;
+ * you should treat this as a stream of numbers, arriving one by one. Letting xi denote
+ * the ith number of the file, the kth median mk is defined as the median of the numbers x1,…,xk.
+ * (So, if k is odd, then mk is ((k+1)/2)th smallest number among x1,…,xk; if k is even, then mk
  * is the (k/2)th smallest number among x1,…,xk.)
  */
 
@@ -21,8 +21,12 @@ public class MedianMaintenance {
         FileReader fr = new FileReader(input);
         BufferedReader br = new BufferedReader(fr);
         String str;
-        while ((str = br.readLine()) != null) {
-            integerList.add(Integer.parseInt(str));
+        try {
+            while ((str = br.readLine()) != null) {
+                integerList.add(Integer.parseInt(str));
+            }
+        } finally {
+            br.close();
         }
     }
 
@@ -155,5 +159,3 @@ public class MedianMaintenance {
         }
     }
 }
-
-
