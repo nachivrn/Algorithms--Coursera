@@ -17,7 +17,7 @@ public class MinimumCut {
         String str;
         while ((str = br.readLine()) != null) {
             String[] strArr = str.trim().split("\t");
-            graph.addVertexNeighbors(strArr);
+            graph.addEdges(strArr);
         }
         br.close();
         graph.vertexes.remove(0);
@@ -128,7 +128,7 @@ public class MinimumCut {
             }
         }
 
-        public void addVertexNeighbors(String[] nodes) {
+        public void addEdges(String[] nodes) {
             if (nodes.length < 0) {
                 throw new IllegalArgumentException();
             }
