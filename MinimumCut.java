@@ -46,6 +46,37 @@ public class MinimumCut {
 
     }
 
+    static void update(List<Integer> nodeANeighbors,
+                       LinkedHashMap<Integer, Integer> merged) {
+        ListIterator<Integer> nodeAIter = nodeANeighbors.listIterator();
+        while (nodeAIter.hasNext()) {
+            int name = nodeAIter.next();
+            if (merged.containsKey(name)) {
+                nodeAIter.remove();
+                nodeAIter.add(merged.get(name));
+            }
+        }
+    }
+
+    static void add(List<Integer> nodeANeighbors,
+                    List<Integer> nodeBNeighbors,
+                    LinkedHashMap<Integer, Integer> merged,
+                    int nodeAValue) {
+        for (int adj : nodeBNeighbors) {
+            if (adj != nodeAValue) {
+                if (merged.get(adj) == null) {
+                    nodeANeighbors.add(adj);
+                } else if (merged.get(adj) != nodeAValue) {
+                    nodeANeighbors.add(merged.get(adj));
+                }
+            }
+        }
+    }
+
+    static void remove(List<Integer> nodeANeighbors, int nodeBValue) {
+        while (nodeANeighbors.remove(new Integer(nodeBValue))) ;
+    }
+
     static int randomContraction(Graph graph) {
         LinkedHashMap<Integer, Integer> merged = new LinkedHashMap<Integer, Integer>();
         Random random = new Random();
@@ -54,34 +85,19 @@ public class MinimumCut {
                 break;
             }
             List<Integer> keys = new ArrayList<Integer>(graph.vertexes.keySet());
-            int nodeAIndex = keys.get(random.nextInt(keys.size()));
-            Vertex nodeA = graph.vertexes.get(nodeAIndex);
+            int nodeAValue = keys.get(random.nextInt(keys.size()));
+            Vertex nodeA = graph.vertexes.get(nodeAValue);
             List<Integer> nodeANeighbors = nodeA.getNeighbors();
-            ListIterator<Integer> nodeAIter = nodeANeighbors.listIterator();
-            while (nodeAIter.hasNext()) {
-                int name = nodeAIter.next();
-                if (merged.containsKey(name)) {
-                    nodeAIter.remove();
-                    nodeAIter.add(merged.get(name));
-                }
-            }
+            update(nodeANeighbors, merged);
             int rand = random.nextInt(nodeANeighbors.size());
-            int nodeBIndex = nodeANeighbors.get(rand);
-            Vertex nodeB = graph.vertexes.get(nodeBIndex);
+            int nodeBValue = nodeANeighbors.get(rand);
+            Vertex nodeB = graph.vertexes.get(nodeBValue);
             List<Integer> nodeBNeighbors = nodeB.getNeighbors();
-            while (nodeANeighbors.remove(new Integer(nodeBIndex))) ;
-            merged.put(nodeBIndex, nodeAIndex);
+            remove(nodeANeighbors, nodeBValue);
+            merged.put(nodeBValue, nodeAValue);
             updateMergedNodes(merged);
-            for (int adj : nodeBNeighbors) {
-                if (adj != nodeAIndex) {
-                    if (merged.get(adj) == null) {
-                        nodeANeighbors.add(adj);
-                    } else if (merged.get(adj) != nodeAIndex) {
-                        nodeANeighbors.add(merged.get(adj));
-                    }
-                }
-            }
-            graph.vertexes.remove(new Integer(nodeBIndex));
+            add(nodeANeighbors, nodeBNeighbors, merged, nodeAValue);
+            graph.vertexes.remove(new Integer(nodeBValue));
         }
         return graph.vertexes.get(new ArrayList<Integer>(graph.vertexes.keySet()).get(0)).
                 getNeighbors().size();
